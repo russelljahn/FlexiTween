@@ -1,6 +1,8 @@
 # FlexiTween
 FlexiTween is a tweening framework for Unity3D with a focus on being easily adaptable for different data types, whether tweening Unity's own types such as `Transform` and `CanvasGroup` or your own.
 
+FlexiTween provides a concise solution to quickly script animation.
+
 ####Usage examples:
 ```csharp
 using FlexiTweening;
@@ -29,7 +31,7 @@ public class TweenExamples : MonoBehaviour
             .To(0.0f, _duration)
             .Easing(_easingCurve) // Optional easing curve
             .OnComplete(() => Debug.Log("Finished fading!")) // Optional callback
-            .Start(); // Must call Start() or the tween won't execute
+            .Start(); // Must call Start() to execute the tween
     }
 
     public void DoFadeExample2()
@@ -39,7 +41,7 @@ public class TweenExamples : MonoBehaviour
             .To(0.0f, _duration)
             .Easing(_easingCurve) // Optional easing curve
             .OnComplete(() => Debug.Log("Finished fading!")) // Optional callback
-            .Start(); // Must call Start() or the tween won't execute
+            .Start(); // Must call Start() to execute the tween
     }
 
     public void StopTweenExample1()
