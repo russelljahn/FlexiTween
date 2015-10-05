@@ -3,58 +3,46 @@ FlexiTween is a tweening framework for Unity3D with a focus on being easily adap
 
 FlexiTween provides a concise solution to quickly script animation.
 
-####Usage examples:
+####Usage example:
 ```csharp
-using FlexiTweening;
-using FlexiTweening.Extensions;
+using FlexiTween;
+using FlexiTween.Extensions;
 using UnityEngine;
 
-[RequireComponent(typeof (CanvasGroup))]
-public class TweenExamples : MonoBehaviour
+public class Demo : MonoBehaviour
 {
-    [SerializeField] private AnimationCurve _easingCurve;
-    [SerializeField] private float _duration = 0.5f;
+    [SerializeField] private Vector3 targetPosition = new Vector3(0, 3, 0);
+    [SerializeField] private float duration = 1;
+    [SerializeField] private AnimationCurve curve = AnimationCurveHelper.GetLinearCurve();
 
-    private CanvasGroup _canvasGroup;
     private ITween _tween;
+    private bool _atTarget;
+    private Vector3 _originalPosition;
 
-    private void Awake()
+    private void Start()
     {
-        _canvasGroup = GetComponent<CanvasGroup>();
+        _originalPosition = transform.position;
+
+        TweenPosition();
     }
 
-    public void DoFadeExample1()
+    private void TweenPosition()
     {
-        /* Simple example of fading out a CanvasGroup. */
-        _tween = FlexiTween.From(_canvasGroup.alpha)
-            .OnUpdate(alpha => _canvasGroup.alpha = alpha)
-            .To(0.0f, _duration)
-            .Easing(_easingCurve) // Optional easing curve
-            .OnComplete(() => Debug.Log("Finished fading!")) // Optional callback
-            .Start(); // Must call Start() to execute the tween
-    }
+        var position = _atTarget
+            ? _originalPosition
+            : targetPosition;
 
-    public void DoFadeExample2()
-    {
-        /* For many types, there are also some included extensions to simplify tweening. */
-        _tween = _canvasGroup.TweenAlpha()
-            .To(0.0f, _duration)
-            .Easing(_easingCurve) // Optional easing curve
-            .OnComplete(() => Debug.Log("Finished fading!")) // Optional callback
-            .Start(); // Must call Start() to execute the tween
-    }
+        _atTarget = !_atTarget;
 
-    public void StopTweenExample1()
-    {
-        /* This stops the tween, and won't execute the optional callback if it was provided. */
-        _tween.Abort();
-    }
+        _tween.SafelyAbort();
+        _tween = Tween
+            .From(transform.position)
+            .To(position, duration)
+            .OnUpdate(p => transform.position = p)
+            .Easing(curve)
+            .Start();
 
-
-    public void StopTweenExample2()
-    {
-        /* This stops the tween, but the callback is still executed. */
-        _tween.Finish();
+        _tween.OnComplete += TweenPosition;
     }
 }
 ```
